@@ -454,17 +454,18 @@ export default function TTSPage() {
   const setLength = selectedSet.sequence.length;
 
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        background: "#0f172a",
-        color: "white",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "flex-start",
-        padding: 40,
-      }}
-    >
+  <main
+    style={{
+      minHeight: "100vh",
+      background: "#0f172a",
+      color: "white",
+      display: "flex",
+      flexDirection: "column",    // ← important
+      alignItems: "center",
+      justifyContent: "flex-start",
+      padding: 40,
+    }}
+  >
       {/* Centered card container */}
       <div
         style={{
