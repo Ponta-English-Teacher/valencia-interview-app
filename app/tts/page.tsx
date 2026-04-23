@@ -127,7 +127,7 @@ export default function TTSPage() {
     try {
       setSttError(null); setTranscript(""); setProcessedAnswer(""); setProcessingError(null); setAudioUrl(null);
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream);
+      const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus") ? "audio/webm;codecs=opus" : MediaRecorder.isTypeSupported("audio/mp4") ? "audio/mp4" : ""; const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : {});
       const chunks: BlobPart[] = [];
       recorder.ondataavailable = (e) => { if (e.data?.size > 0) chunks.push(e.data); };
       recorder.onstop = async () => {
@@ -136,7 +136,7 @@ export default function TTSPage() {
         setIsTranscribing(true);
         try {
           const formData = new FormData();
-          const mimeType = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/mp4"; const ext = mimeType === "audio/webm" ? "webm" : "mp4"; formData.append("file", new Blob(chunks, { type: mimeType }), `answer.${ext}`);
+          const actualType = recorder.mimeType || "audio/mp4"; const ext = actualType.includes("mp4") ? "mp4" : "webm"; formData.append("file", new Blob(chunks, { type: actualType }), `answer.${ext}`);
           const res = await fetch("/api/stt", { method: "POST", body: formData });
           if (!res.ok) throw new Error(await res.text());
           setTranscript((await res.json()).text || "");
