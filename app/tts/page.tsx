@@ -136,7 +136,7 @@ export default function TTSPage() {
         setIsTranscribing(true);
         try {
           const formData = new FormData();
-          formData.append("file", new Blob(chunks, { type: "audio/webm" }), "answer.webm");
+          const mimeType = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/mp4"; const ext = mimeType === "audio/webm" ? "webm" : "mp4"; formData.append("file", new Blob(chunks, { type: mimeType }), `answer.${ext}`);
           const res = await fetch("/api/stt", { method: "POST", body: formData });
           if (!res.ok) throw new Error(await res.text());
           setTranscript((await res.json()).text || "");
